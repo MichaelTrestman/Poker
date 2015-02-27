@@ -19,7 +19,7 @@ Player = Struct.new(:name) do
 end
 
 class Game
-  attr_reader :players, :dealer_index, :deck
+  attr_accessor :players, :dealer_index, :deck, :current_player_cards
 
   def initialize(players, dealer_index, deck)
     @shared_cards
@@ -155,17 +155,49 @@ class Game
   end
 
   def find_best_hand player
-    @current_player_cards =  @all_hole_cards[@players.index player] + @shared_cards
+    @current_player_cards = @all_hole_cards[@players.index player] + @shared_cards
     # these must all be implemented!
     # return ['straight flush', find_straight_flush] if find_straight_flush
     # return ['four of a kind', find_four_of_a_kind] if find_four_of_a_kind
     # return ['full house', find_full_house] if find_full_house
-    # return ['flush', find_flush] if find_flush
-    # return ['straight', find_straight] if find_straight
+    return ['flush', find_flush] if find_flush
+    return ['straight', find_straight] if find_straight
     return ['three of a kind', find_three_of_a_kind] if find_three_of_a_kind
     return ["two pairs", find_two_pairs] if find_two_pairs
     return ["pair", find_pair] if find_pair
     return ["high card", find_highest_card]
+  end
+
+  def find_flush
+    ["spade", "heart", "diamond", "club"].each do |suit|
+      cards_in_suit = @current_player_cards.select{|card| card.suite == suit}
+      return cards_in_suit if cards_in_suit.length > 5
+    end
+    false
+  end
+
+  def find_straight
+    straight = false
+    cards = @current_player_cards.sort_by{|card| card.num}.reverse
+    cards.each do |card|
+      maybe_straight = true
+      num = card.num
+      possible_straight = [card]
+
+      while maybe_straight
+        num -= 1
+        next_in_straight = cards.select do |card|
+          card.num == num
+        end
+        if next_in_straight.length > 0
+          possible_straight << next_in_straight[0]
+        else
+          maybe_straight = false
+        end
+      end
+      return possible_straight if possible_straight.length >= 5
+      return false
+    end
   end
 
   def find_three_of_a_kind

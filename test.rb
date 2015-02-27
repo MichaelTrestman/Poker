@@ -36,11 +36,38 @@ describe "Game" do
   end
 
   describe "@determine_winner" do
+
     it "returns the winner's index" do
+
       @new_game.play
       # @new_game.determine_winner(*@new_game.deal_cards)
 
+
+    end
+    it "gives the win to a flush if that's the best hand" do
+      @new_game.current_player_cards = [
+        Card.new('heart', 2),
+        Card.new('spade', 5),
+        Card.new('clover', 1),
+        Card.new('horshoe', 4),
+        Card.new('batman', 9),
+        Card.new('hash-rocket', 12),
+        Card.new('something else', 10)
+      ]
+      expect(@new_game.find_flush).to be false
+      @new_game.current_player_cards = [
+        Card.new('heart', 2),
+        Card.new('heart', 5),
+        Card.new('heart', 1),
+        Card.new('heart', 4),
+        Card.new('heart', 9),
+        Card.new('heart', 12),
+        Card.new('heart', 10)
+      ]
+      expect(@new_game.find_flush).not_to be false
     end
   end
+
+
 
 end
