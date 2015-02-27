@@ -83,7 +83,7 @@ class Game
 
       counter += 1
 
-      ['straight flush', 'four of a kind', 'full house', 'flush', 'straight', 'three of a kind',"two pair", "pair","high card"].each do |hand|
+      ['straight flush', 'four of a kind', 'full house', 'flush', 'straight', 'three of a kind',"two pairs", "pair","high card"].each do |hand|
 
         if winners.length == 0
 
@@ -131,7 +131,8 @@ class Game
     #     hand[1].sort_by{|card| card.num}.last
     # end.sort_by{|card| card.num}.last
 
-    highest_card_of_any_winner = winners.map do |player|
+    highest_card_of_any_winner =
+    winners.map do |player|
       @best_hands_of_each_player[@players.index player]
     end.map do |hand|
         hand[1].sort_by{|card| card.num}.last
@@ -161,10 +162,37 @@ class Game
     # return ['full house', find_full_house] if find_full_house
     # return ['flush', find_flush] if find_flush
     # return ['straight', find_straight] if find_straight
-    #return ['three of a kind', find_three_of_a_kind] if find_three_of_a_kind
-    # return ["two_pair", find_two_pairs] if find_two_pairs
+    return ['three of a kind', find_three_of_a_kind] if find_three_of_a_kind
+    return ["two pairs", find_two_pairs] if find_two_pairs
     return ["pair", find_pair] if find_pair
     return ["high card", find_highest_card]
+  end
+
+  def find_three_of_a_kind
+    three_of_a_kind = false
+    nums = *(1..13)
+    nums.each do |num|
+      cards_with_num = []
+      @current_player_cards.each do |card|
+        cards_with_num << card if card.num == num
+      end
+      three_of_a_kind = cards_with_num if cards_with_num.length > 2
+    end
+      three_of_a_kind
+  end
+  def find_two_pairs
+    two_pairs = false
+    pairs = []
+    nums = *(1..13)
+    nums.each do |num|
+      cards_with_num = []
+      @current_player_cards.each do |card|
+        cards_with_num << card if card.num == num
+      end
+      pairs << cards_with_num if cards_with_num.length > 1
+    end
+    two_pairs = pairs.flatten if pairs.length > 1
+    two_pairs
   end
   def find_pair
     pair = false
