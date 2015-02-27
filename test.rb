@@ -44,7 +44,7 @@ describe "Game" do
 
 
     end
-    it "gives the win to a flush if that's the best hand" do
+    it "detects flushes" do
       @new_game.current_player_cards = [
         Card.new('heart', 2),
         Card.new('spade', 5),
@@ -55,6 +55,7 @@ describe "Game" do
         Card.new('something else', 10)
       ]
       expect(@new_game.find_flush).to be false
+
       @new_game.current_player_cards = [
         Card.new('heart', 2),
         Card.new('heart', 5),
@@ -66,6 +67,52 @@ describe "Game" do
       ]
       expect(@new_game.find_flush).not_to be false
     end
+    it "detects full houses" do
+      @new_game.current_player_cards = [
+        Card.new('heart', 2),
+        Card.new('spade', 5),
+        Card.new('clover', 1),
+        Card.new('horshoe', 4),
+        Card.new('batman', 9),
+        Card.new('hash-rocket', 12),
+        Card.new('something else', 10)
+      ]
+      expect(@new_game.find_full_house).to be false
+
+      @new_game.current_player_cards = [
+        Card.new('heart', 2),
+        Card.new('spade', 2),
+        Card.new('clover', 2),
+        Card.new('horshoe', 4),
+        Card.new('batman', 4),
+        Card.new('hash-rocket', 12),
+        Card.new('something else', 10)
+      ]
+      expect(@new_game.find_full_house).not_to be false
+    end
+  end
+  it "detects straight flushes" do
+    @new_game.current_player_cards = [
+      Card.new('heart', 2),
+      Card.new('spade', 5),
+      Card.new('clover', 1),
+      Card.new('horshoe', 4),
+      Card.new('batman', 9),
+      Card.new('hash-rocket', 12),
+      Card.new('something else', 10)
+    ]
+    expect(@new_game.find_straight_flush).to be false
+
+    @new_game.current_player_cards = [
+      Card.new('heart', 2),
+      Card.new('heart', 3),
+      Card.new('heart', 4),
+      Card.new('heart', 5),
+      Card.new('heart', 6),
+      Card.new('heart', 7)
+
+    ]
+    expect(@new_game.find_straight_flush).not_to be false
   end
 
 

@@ -109,11 +109,7 @@ class Game
     winners = winners.sort_by do |player|
 
       best_hand = @best_hands_of_each_player[@players.index player]
-      # puts
-      # puts "player | best hand"
-      # p player.name
-      # p best_hand
-      # puts
+
       high_card = best_hand[1]
         .map{|card| card.num }
         .sort_by { |card| card }
@@ -123,13 +119,6 @@ class Game
       high_card
     end
 
-    # puts "best hands of each player:"
-    # p best_hands_of_each_player
-
-    # highest_card_of_any_player =
-    # @best_hands_of_each_player.map do |hand|
-    #     hand[1].sort_by{|card| card.num}.last
-    # end.sort_by{|card| card.num}.last
 
     highest_card_of_any_winner =
     winners.map do |player|
@@ -138,16 +127,8 @@ class Game
         hand[1].sort_by{|card| card.num}.last
     end.sort_by{|card| card.num}.last
 
-    # p "high card!!!"
-    # p highest_card_of_any_player
-
     winners = winners.select do |player|
-      # p "!!!!!!!!!!!!!!"
-      # p 'winner selection'
-      # p player
-      # p highest_card_of_any_winner
 
-      # p high_cards[player]
       high_cards[player] == highest_card_of_any_winner.num
     end
 
@@ -156,10 +137,10 @@ class Game
 
   def find_best_hand player
     @current_player_cards = @all_hole_cards[@players.index player] + @shared_cards
-    # these must all be implemented!
-    # return ['straight flush', find_straight_flush] if find_straight_flush
-    # return ['four of a kind', find_four_of_a_kind] if find_four_of_a_kind
-    # return ['full house', find_full_house] if find_full_house
+
+    return ['straight flush', find_straight_flush] if find_straight_flush
+    return ['four of a kind', find_four_of_a_kind] if find_four_of_a_kind
+    return ['full house', find_full_house] if find_full_house
     return ['flush', find_flush] if find_flush
     return ['straight', find_straight] if find_straight
     return ['three of a kind', find_three_of_a_kind] if find_three_of_a_kind
@@ -167,11 +148,41 @@ class Game
     return ["pair", find_pair] if find_pair
     return ["high card", find_highest_card]
   end
+  def find_straight_flush
+    flush = find_flush
+    if flush
+      @current_player_cards = flush
+      straight = find_straight
+      return flush.sort_by {|card| card.num}.reverse if straight
+    end
+    false
+  end
 
+
+
+  def find_four_of_a_kind
+    four_of_a_kind = false
+    nums = *(1..13)
+    nums.each do |num|
+      cards_with_num = []
+      @current_player_cards.each do |card|
+        cards_with_num << card if card.num == num
+      end
+      four_of_a_kind = cards_with_num if cards_with_num.length > 3
+    end
+      four_of_a_kind
+
+  end
+  def find_full_house
+    trio = find_three_of_a_kind
+    two_pairs = find_two_pairs
+    return trio + two_pairs if trio and two_pairs
+    return false
+  end
   def find_flush
     ["spade", "heart", "diamond", "club"].each do |suit|
       cards_in_suit = @current_player_cards.select{|card| card.suite == suit}
-      return cards_in_suit if cards_in_suit.length > 5
+      return cards_in_suit if cards_in_suit.length >= 5
     end
     false
   end
