@@ -31,20 +31,19 @@ class Game
 
   def play
     all_hole_cards, flop, turn, river = deal_cards
-    all_hole_cards.each_with_index { |hole_cards, index| puts "player#{@players[index].name}: #{hole_cards[0]}, #{hole_cards[1]}" }
+    all_hole_cards.each_with_index { |hole_cards, index| puts "#{@players[index].name}: #{hole_cards[0]}, #{hole_cards[1]}" }
     puts "shared cards:"
 
     puts (flop + [turn] + [river]).join " "
-    puts
-    puts
-    puts
+
     winner_indices = determine_winner(all_hole_cards, flop, turn, river)
-    puts "$$$$$$$$$"
-    p winner_indices
+    # puts "$$$$$$$$$"
+    # p winner_indices
     winner_indices.each { |w_i|
 
-      puts "winner is #{players[w_i]} with a #{@best_hands_of_each_player[w_i]}"
+      puts "winner is #{players[w_i]} with a #{@best_hands_of_each_player[w_i][0]} #{@best_hands_of_each_player[w_i][1]}"
     }
+    3.times {puts}
     return winner_indices
 
   end
@@ -98,8 +97,7 @@ class Game
     if winners.length > 1
       winners = break_tie winners
     end
-    p 'winners!!!!!!!!!!'
-    p winners
+
     return winners.map { |e|  @players.index e }
 
   end
